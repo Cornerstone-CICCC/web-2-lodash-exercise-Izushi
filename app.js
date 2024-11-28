@@ -24,25 +24,50 @@ const cities = [
 ];
 
 // GROUP ARRAY BY STATES
-const cityGroups =
-console.log(cityGroups)
+const cityGroups = _.groupBy(cities, 'state');
+console.log(cityGroups);
 
 // SORT ARRAY ALPHABETICALLY BY CITY NAME
-const sortedCities =
-console.log(sortedCities)
+const sortedCities = _.sortBy(cities, 'cityName');
+console.log(sortedCities);
 
 // SHOW ONLY CITIES OF CALIFORNIA
-const californiaCities =
+const californiaCities = _.chain(cities)
+  .filter(city => city.state === 'California')
+  .map(city => city.cityName)
+  .value();
 console.log(californiaCities)
 
 // SHOW ONLY CITIES OF TEXAS WITH A POPULATION OF LESS THAN 1 MILLION
-const texasCities =
+const texasCities = _.chain(cities)
+  .filter(city => city.state === 'Texas')
+  .filter(city => city.population < 1000000)
+  .value();
+
 console.log(texasCities)
 
 // ADD ALL THE POPULATION OF CALIFORNIA CITIES
-const californiaPopulation = 
-console.log(californiaCities)
+const californiaPopulation = _.chain(cities)
+  .filter(city => city.state === 'California')
+  .reduce((population, city) => {
+    return population + city.population;
+  }, 0)
+  .value();
+console.log(californiaPopulation)
 
 // GROUP BY PARTY AND SHOW ONLY CITIES WITH A POPULATION ABOVE 1 MILLION. SORT CITY NAMES ALPHABETICALLY
-const newData =
+const newData = _.chain(cities)
+  .filter(city => city.population > 1000000)
+  .groupBy(city => city.party)
+  .mapValues(city => _.sortBy(city, 'cityName'))
+  .value();
 console.log(newData)
+
+// GROUP BY PARTY AND LIST POPULATION FOR EACH STATE
+const populationData = _.chain(cities)
+  .groupBy(city => city.party)
+  .mapValues(city => _.groupBy(city, 'state'))
+  .mapValues(city => _.mapValues(city, state => _.sumBy(state, 'population')))
+  .value();
+
+console.log(populationData);
